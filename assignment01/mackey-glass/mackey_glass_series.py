@@ -67,6 +67,8 @@ def mackey_glass(length=1000, x0=None, a=0.2, b=0.1, c=10.0, tau=23.0,
 
 if __name__ == '__main__':
     x = mackey_glass(tau=23.0, sample=0.46, n=1000)
+
+    print(f"the shape of the time series: {x.shape}")
     
     plt.plot(range(1000), x, linewidth=2)   # visualize the time series
     plt.show()  
