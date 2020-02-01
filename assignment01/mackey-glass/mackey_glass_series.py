@@ -9,9 +9,11 @@ source: https://github.com/manu-mannattil/nolitsa
 
 import numpy as np
 import matplotlib.pyplot as plt
+import os.path as osp
+import os
 
-def mackey_glass(length=1000, x0=None, a=0.2, b=0.1, c=10.0, tau=23.0,
-                 n=1000, sample=0.46, discard=250):
+def mackey_glass(length=5000, x0=None, a=0.2, b=0.1, c=10.0, tau=23.0,
+                 n=5000, sample=0.46, discard=250):
     """Generate time series using the Mackey-Glass equation.
     Generates time series using the discrete approximation of the
     Mackey-Glass delay differential equation described by Grassberger &
@@ -66,10 +68,15 @@ def mackey_glass(length=1000, x0=None, a=0.2, b=0.1, c=10.0, tau=23.0,
 
 
 if __name__ == '__main__':
-    x = mackey_glass(tau=23.0, sample=0.46, n=1000)
-
+    data_dir = "./data"
+    if not osp.exists(data_dir):
+        os.makedirs(data_dir)
+    x = mackey_glass(tau=23.0, sample=0.46, n=5000)
+    print(x)
+    y=x[:1000]
     print(f"the shape of the time series: {x.shape}")
-    
-    plt.plot(range(1000), x, linewidth=2)   # visualize the time series
+    print(f"the shape of the time series: {y.shape}")    
+    np.save(osp.join(data_dir,"data.npy"),x)
+    plt.plot(range(5000), x, linewidth=2)   # visualize the time series
     plt.show()  
     
