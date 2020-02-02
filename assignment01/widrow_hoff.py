@@ -1,7 +1,7 @@
 """
 EEE511 team assignment 01 - team 03
 
-widrow_hoff LMS algorithm
+Widrow Hoff LMS algorithm
 
 Widrow, Bernard, and Marcian E. Hoff. Adaptive switching circuits. 
 No. TR-1553-1. Stanford Univ Ca Stanford Electronics Labs, 1960.
