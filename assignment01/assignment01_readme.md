@@ -24,7 +24,7 @@ The source code is from [NoLiTSA](https://github.com/manu-mannattil/nolitsa). Th
 
 
 
-**To run / test the LMS algorithm:** 
+#### To run / test the LMS algorithm
 
 ```python
 python3 widrow_hoff.py
@@ -33,10 +33,10 @@ python3 widrow_hoff.py
 **Requirements**
 
 ```python
-python 					  3.7.5
-seaborn                   0.9.0
-numpy                     1.17.4
-matplotlib                3.1.1
+python 	    3.7.5
+seaborn     0.9.0
+numpy       1.17.4
+matplotlib  3.1.1
 ```
 
 It is also feasible to test the LMS algorithm without using the `seaborn`, comment out line 14 of `widrow_hoff.py` then use. 
