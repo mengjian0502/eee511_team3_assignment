@@ -69,14 +69,16 @@ def mackey_glass(length=5000, x0=None, a=0.2, b=0.1, c=10.0, tau=23.0,
 
 if __name__ == '__main__':
     data_dir = "./data"
+    data_size = 5000
+
     if not osp.exists(data_dir):
         os.makedirs(data_dir)
-    x = mackey_glass(tau=23.0, sample=0.46, n=5000)
-    print(x)
-    y=x[:1000]
-    print(f"the shape of the time series: {x.shape}")
-    print(f"the shape of the time series: {y.shape}")    
-    np.save(osp.join(data_dir,"data.npy"),x)
-    plt.plot(range(5000), x, linewidth=2)   # visualize the time series
-    plt.show()  
+    x = mackey_glass(length=data_size, tau=23.0, sample=0.46, n=5000)
+    # print(x)
+    # y=x[:1000]
+    # print(f"the shape of the time series: {x.shape}")
+    # print(f"the shape of the time series: {y.shape}")    
+    np.save(osp.join(data_dir,"mg_time_series_5000.npy"),x.reshape(data_size, 1))
+    # plt.plot(range(5000), x, linewidth=2)   # visualize the time series
+    # plt.show()  
     

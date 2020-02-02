@@ -18,16 +18,26 @@ parser.add_argument('--theta', type=float)
 parser.add_argument('--time_step', type=int, default=2, help='the number of samples extracted from the time series in each epoch')
 
 args = parser.parse_args()
+
+
 def main():
-    train_target_path = './mackey-glass/data/mg_series_train.npy'          # training set (time series)
+    train_target_path = './mackey-glass/data/mg_series_5000.npy'          # dataset (time series)
 
     weights = np.zeros([args.time_step, 1])                                # initialize the weight vector as a t_step by 1 vector
 
-    train_target = dataloader(train_target_path)
+    dataset = dataloader(train_target_path)
+
+    train_target = dataset[:4000]
+    test_target = dataset[4000:5000]
+
+    print(f"number of samples for training: {train_target.shape}")
+    print(f"number of samples for test: {test_target.shape}")
 
     for epoch in range(args.epochs):
-        weights, mse = train(args.eta, args.time_step, train_target, weights)
-        print(mse)
+        weights, train_mse = train(args.eta, args.time_step, train_target, weights)
+        test_mse = test(test_target, weights, args.time_step)
+
+        print(f'[Epoch: {epoch+1}], training error: {train_mse}, test error: {test_mse}')
 
 
 def dataloader(target_path):
@@ -66,8 +76,30 @@ def train(eta, time_step, target, weight):
     return weight, mse
 
 
-def test(target, weight):
-    pass
+def test(target, weight, time_step):
+    """
+    LMS algorithm for Mackey Glass Time Series prediction
+    """
+    num_window = target.shape[0] // time_step
+    loss_sum = 0
+
+    for ii in range(num_window):
+        t_start, t_end = ii, ii + time_step
+
+        x = target[t_start:t_end].reshape(time_step, 1)                    # input time series
+        y_true = target[t_end+1]                                           # target output
+
+        y_pred = weight.T @ x                                              # compute the prediction
+
+        loss = (y_true - y_pred)**2
+
+        loss_sum += loss
+
+    mse = loss_sum / target.shape[0]
+
+    return mse
+
+
     
 
 if __name__ == '__main__':
