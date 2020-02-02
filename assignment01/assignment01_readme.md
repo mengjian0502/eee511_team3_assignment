@@ -20,7 +20,7 @@ The dataset (time series) can be generated through `mackey_glass_series.py`
 python3 mackey_glass_series.py
 ```
 
-The source code is from [NoLiTSA](https://github.com/manu-mannattil/nolitsa). The generated dataset will be directly saved into the `./mackey-glass/data/` folder. 
+The source code of the data generator is from [NoLiTSA](https://github.com/manu-mannattil/nolitsa). The generated dataset will be directly saved into the `./mackey-glass/data/` folder. 
 
 
 
