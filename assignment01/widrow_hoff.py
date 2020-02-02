@@ -19,43 +19,41 @@ parser.add_argument('--time_step', type=int, default=2, help='the number of samp
 
 args = parser.parse_args()
 def main():
-    train_set_path = ''                             # training set path (the time series)
-    train_target_path = ''                          # training set target 
+    train_target_path = ''                          # training set (time series)
 
     weights = np.zeros([args.time_step, 1])         # initialize the weight vector as a t_step by 1 vector
 
-    train_dataset, train_target = dataloader(train_set_path, train_target_path)
+    train_target = dataloader(train_target_path)
 
     for epoch in range(args.epochs):
-        weights, mse = train(args.eta, args.time_step, train_dataset, train_target, weights)
+        weights, mse = train(args.eta, args.time_step, train_target, weights)
         print(mse)
 
 
-def dataloader(data_path, target_path):
+def dataloader(target_path):
     """
     Load the pre-generated dataset
     """
-    dataset = np.load(data_path)                    # load the dataset
     target = np.load(target_path)                   # load the target
     # print(f'size of the dataset: {dataset.shape}')
     
-    return dataset, target
+    return target
 
 
-def train(eta, time_step, dataset, target, weight):
+def train(eta, time_step, target, weight):
     """
     LMS algorithm training
     """
-    num_window = dataset.shape[0] // time_step      # number of windows
+    num_window = target.shape[0] // time_step      # number of windows
     loss_sum = 0
 
     for ii in range(num_window):
         t_start, t_end = ii, ii + time_step
+        x = np.arange(t_start, t_end, 1)            # time steps
 
-        x = dataset[t_start, t_end]                  # extract the data samples
         y_true = target[t_start, t_end]
 
-        y_pred = weight @ x                          # compute the prediction
+        y_pred = weight @ x                         # compute the prediction
 
         loss = (y_true - y_pred)**2
 
@@ -63,14 +61,11 @@ def train(eta, time_step, dataset, target, weight):
 
         weight = weight - eta * (y_pred - y_true) * x
 
-    mse = loss_sum / dataset.shape[0]                # compute the mse error
+    mse = loss_sum / target.shape[0]                # compute the mse error
 
     return weight, mse
     
     
 
-
-    
-
-        
-        
+if __name__ == '__main__':
+    main()
