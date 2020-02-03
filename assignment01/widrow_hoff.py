@@ -53,6 +53,23 @@ def main():
 
         print(f'[Epoch: {epoch+1}], training error: {train_mse}, test loss: {test_mse}')
 
+    
+    # plot the dataset
+    plt.figure(figsize=(8,6))
+    plt.plot(range(train_target.shape[0]), 
+            train_target, linestyle='-', label='training set')
+
+    plt.plot(range(train_target.shape[0], train_target.shape[0] + test_target.shape[0]), 
+            test_target, linestyle='-.', label='test set')
+    plt.xlabel('time')
+    plt.ylabel('$x(t)$')
+
+    plt.legend(loc='best')
+    plt.savefig(args.save_path+'dataset.png', bbox_inches = 'tight',
+    pad_inches = 0, dpi=300)
+    
+    plt.close()
+
     # plot the prediction
     plt.figure(figsize=(8,6))
     
@@ -68,7 +85,8 @@ def main():
 
     plt.legend(loc='best')
 
-    plt.savefig(args.save_path+'prediction.png', dpi=300)
+    plt.savefig(args.save_path+'prediction.png', bbox_inches = 'tight',
+    pad_inches = 0, dpi=300)
 
     plt.close()
 
@@ -80,7 +98,8 @@ def main():
     plt.ylabel('Training loss $|d(t)-y(t)|$')
     plt.grid(True)
 
-    plt.savefig(args.save_path+'training_loss.png', dpi=300)
+    plt.savefig(args.save_path+'training_loss.png',bbox_inches = 'tight',
+    pad_inches = 0, dpi=300)
 
     plt.close()
 
@@ -135,7 +154,7 @@ def train(eta, target, weight):
 
         weight = weight + eta * loss * x                                                    # update the weights
 
-        loss_sum += loss
+        loss_sum += loss**2
 
         series_pred.append(y_pred[0])
         series_loss.append(loss[0])
@@ -177,7 +196,7 @@ def test(target, weight):
         if ii % 50 == 0:
             print(f'test loss: {loss[0]}')
 
-        loss_sum += loss
+        loss_sum += loss**2
 
         series_pred.append(y_pred[0])
         series_loss.append(loss[0])
