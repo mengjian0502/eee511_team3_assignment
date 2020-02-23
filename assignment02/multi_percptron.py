@@ -1,7 +1,7 @@
 """
 EEE511 team assignment 02 - team 03 
 
-Kaggle Happiness Score Regression
+Kaggle Happiness Score
 https://www.kaggle.com/unsdsn/world-happiness
 """
 
@@ -41,6 +41,9 @@ parser.add_argument('--prt_freq', type=int, default=1, help='print frequency')
 args = parser.parse_args()
 
 class Net(nn.Module):
+    """
+    Multi-layer perceptron
+    """
     def __init__(self, D_h):
         super(Net, self).__init__()
         self.linear1 = nn.Linear(6, D_h)
@@ -53,8 +56,8 @@ class Net(nn.Module):
         return out
 
 def main():
-    # random.seed(5000)
-    # torch.manual_seed(5000)
+    random.seed(5000)
+    torch.manual_seed(5000)
     # log 
     log = open(os.path.join(args.save_path,
                             'log_mlp_log.txt'), 'w')
@@ -89,7 +92,7 @@ def main():
         valid_dataset, valid_target = features[int(args.val_perc * features.size(0)):-1, :], score[int(args.val_perc * features.size(0)):-1]
 
     print_log(f"training set size: {train_dataset.size()}", log)
-    print_log(f"validation set size: {train_target.size()}", log)
+    print_log(f"validation set size: {valid_target.size()}", log)
 
     training_loader = train_loader(train_dataset.float(), train_target.float(), args.batch)
     val_loader = valid_loader(valid_dataset.float(), valid_target.float(), args.batch)
@@ -136,8 +139,11 @@ def main():
             print_log(f"Epoch: {e}/{args.epochs}, training loss: {t_loss}, validation_loss: {v_loss}, LR={current_learning_rate}, momentum={current_momentum}, best accuracy {best_loss}", log)
     
     plt.figure(figsize=(8,6))
-    plt.plot([ii for ii in range(args.epochs)], train_loss)
-    plt.plot([ii for ii in range(args.epochs)], val_loss)
+    plt.plot([ii for ii in range(args.epochs)], train_loss, label='train')
+    plt.plot([ii for ii in range(args.epochs)], val_loss, label='valid')
+    plt.xlabel(f"Epoch", fontsize=14, fontweight='bold')
+    plt.ylabel(f"MSE loss", fontsize=14, fontweight='bold')
+    plt.legend(loc='best')
     plt.savefig(args.save_path+f'curve.png', dpi=300)
 
 def train(model, train_loader, optimizer, epoch, total_epoch, device):
