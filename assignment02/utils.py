@@ -46,7 +46,7 @@ def data_read(data_path, tensor=False):
         df = pd.read_csv(file_path, usecols=attr).to_numpy()
         
         sc = df[:, 0]
-        f = df[:, 1:-1]
+        f = df[:, 1:]
         
         score.append(sc)
         features.append(f)
@@ -90,7 +90,8 @@ def valid_loader(v_dataset, v_target, batchsize):
         shuffle=True
     )
 
-def save_checkpoint(state, is_best, save_path, filename='checkpoint.pth.tar'):
-    torch.save(state, save_path+filename)
+def save_checkpoint(state, is_best, save_path, filename='checkpoint.pth'):
     if is_best:
-        shutil.copyfile(filename, save_path+'model_best.pth.tar')
+        torch.save(state, save_path+'model_best.pth')
+    else:
+        torch.save(state, save_path+filename)

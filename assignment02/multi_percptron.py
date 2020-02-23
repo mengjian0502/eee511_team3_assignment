@@ -21,7 +21,7 @@ parser = argparse.ArgumentParser(description='Kaggle Happiness Score Regression'
 # parameters
 parser.add_argument('--year', type=int, default=2015, help='which year')
 parser.add_argument('--lr', type=float, default=0.01, help='learning rate of training')
-parser.add_argument('--epochs', type=int, default=10, help='training epochs')
+parser.add_argument('--epochs', type=int, default=50, help='training epochs')
 parser.add_argument('--val_perc', type=float, default=0.2, help='ratio of validation set')
 parser.add_argument('--batch', type=int, default=64, help='batch size')
 parser.add_argument('--cuda', default=True, help='use cuda')
@@ -69,8 +69,11 @@ def main():
         score = torch.load(data_dir+'happy_score.pt', map_location=device)
         print(f"size of the dataset: {features.size(0)}")
 
-    train_dataset, train_target = features[:, int(args.val_perc * features.size(0))], score[:, int(args.val_perc * features.size(0))]
-    valid_dataset, valid_target = features[int(args.val_perc * features.size(0)):-1] ,score[int(args.val_perc * features.size(0)):-1]
+        train_dataset, train_target = features[:int(args.val_perc * features.size(0)), :], score[:int(args.val_perc * features.size(0))]
+        valid_dataset, valid_target = features[int(args.val_perc * features.size(0)):-1, :], score[int(args.val_perc * features.size(0)):-1]
+
+    print(train_dataset.size())
+    print(train_target.size())
 
     training_loader = train_loader(train_dataset.float(), train_target.float(), args.batch)
     val_loader = valid_loader(valid_dataset.float(), valid_target.float(), args.batch)
@@ -78,8 +81,8 @@ def main():
     model = Net(d_h).to(device)
     optimizer = torch.optim.SGD(model.parameters(), lr=args.lr, momentum=0.9)
 
-    for e in range(1, args.epoch+1):
-        t_loss = train(model, training_loader, optimizer, e, args.epoch, device)
+    for e in range(1, args.epochs+1):
+        t_loss = train(model, training_loader, optimizer, e, args.epochs, device)
         v_loss = valid(model, e, val_loader, device)
 
         if e == 1:
@@ -90,7 +93,7 @@ def main():
                 'state_dict': model.state_dict(),
                 'best_loss': v_loss,
                 'optimizer' : optimizer.state_dict(),
-            }, is_best, args.save_path, filename=f'checkpoint.pth.tar')
+            }, is_best, args.save_path)
         else:
             is_best = v_loss < best
             save_checkpoint({
@@ -98,7 +101,7 @@ def main():
                 'state_dict': model.state_dict(),
                 'best_loss': v_loss,
                 'optimizer' : optimizer.state_dict(),
-            }, is_best, args.save_path, filename=f'checkpoint.pth.tar')
+            }, is_best, args.save_path)
 
         if e % args.prt_freq == 0:
             print(f"Epoch: {e}, training loss: {t_loss}, validation_loss: {v_loss}")
