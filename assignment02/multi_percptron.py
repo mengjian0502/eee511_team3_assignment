@@ -12,15 +12,16 @@ import torch
 import torch.nn as nn
 import argparse
 import os
-from sklearn.linear_model import LinearRegression
+import torch.utils.data as data
+from torch.autograd import Variable
 from utils import *
 
 parser = argparse.ArgumentParser(description='Kaggle Happiness Score Regression')
 
 # parameters
 parser.add_argument('--year', type=int, default=2015, help='which year')
-parser.add_argument('--lr', type=float, default=0.1, help='learning rate of training')
-parser.add_argument('--epochs', type=int, default=100, help='training epochs')
+parser.add_argument('--lr', type=float, default=0.01, help='learning rate of training')
+parser.add_argument('--epochs', type=int, default=10, help='training epochs')
 parser.add_argument('--val_perc', type=float, default='ratio of validation set')
 parser.add_argument('--batch', type=int, default=64, help='batch size')
 parser.add_argument('--cuda', default=True, help='use cuda')
@@ -28,14 +29,15 @@ parser.add_argument('--cuda', default=True, help='use cuda')
 
 # save results
 parser.add_argument('--save_path', type=str, default='./save/', help='folder to save the results/plots')
+parser.add_argument('--prt_freq', type=int, default=10, help='print frequency')
 
 args = parser.parse_args()
 
 class Net(nn.Module):
-    def __init__(self, D_in, D_h, D_out):
+    def __init__(self, D_h):
         super(Net, self).__init__()
-        self.linear1 = nn.Linear(D_in, D_h)
-        self.linear2 = nn.Linear(D_h, D_out)
+        self.linear1 = nn.Linear(6, D_h)
+        self.linear2 = nn.Linear(D_h, 1)
         self.relu = nn.ReLU(inplace=True)
     
     def forward(self, x):
@@ -47,6 +49,8 @@ def main():
     # devices
     use_cuda = args.cuda and torch.cuda.is_available()
     device = torch.device("cuda" if use_cuda else "cpu")
+
+    d_h = 5     # dimensionality of hidden layer
 
     if not os.path.isdir(args.save_path):
         os.makedirs(args.save_path)
@@ -65,9 +69,39 @@ def main():
         score = torch.load(data_dir+'happy_score.pt', map_location=device)
         print(f"size of the dataset: {features.size(0)}")
 
-    # dataset splitting needed.
-    
-    
+    train_dataset, train_target = features[:, int(args.val_perc * features.size(0))], score[:, int(args.val_perc * features.size(0))]
+    valid_dataset, valid_target = features[int(args.val_perc * features.size(0)):-1] ,score[int(args.val_perc * features.size(0)):-1]
+
+    training_loader = train_loader(train_dataset.float(), train_target.float(), args.batch)
+    val_loader = valid_loader(valid_dataset.float(), valid_target.float(), args.batch)
+
+    model = Net(d_h).to(device)
+    optimizer = torch.optim.SGD(model.parameters(), lr=args.lr, momentum=0.9)
+
+    for e in range(1, args.epoch+1):
+        t_loss = train(model, training_loader, optimizer, e, args.epoch, device)
+        v_loss = valid(model, e, val_loader, device)
+
+        if e == 1:
+            best = v_loss
+            is_best = False
+            save_checkpoint({
+                'epoch': e,
+                'state_dict': model.state_dict(),
+                'best_loss': v_loss,
+                'optimizer' : optimizer.state_dict(),
+            }, is_best, args.save_path, filename=f'checkpoint.pth.tar')
+        else:
+            is_best = v_loss < best
+            save_checkpoint({
+                'epoch': e,
+                'state_dict': model.state_dict(),
+                'best_loss': v_loss,
+                'optimizer' : optimizer.state_dict(),
+            }, is_best, args.save_path, filename=f'checkpoint.pth.tar')
+
+        if e % args.prt_freq == 0:
+            print(f"Epoch: {e}, training loss: {t_loss}, validation_loss: {v_loss}")
     
     
 def train(model, train_loader, optimizer, epoch, total_epoch, device):

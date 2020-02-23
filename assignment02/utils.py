@@ -9,6 +9,8 @@ https://www.kaggle.com/unsdsn/world-happiness
 import numpy as np
 import pandas as pd
 import torch
+import torch.utils.data as data
+import shutil
 
 def to_tensor(sat_val):
     is_scalar = not isinstance(sat_val, torch.Tensor)
@@ -60,4 +62,35 @@ def data_read(data_path, tensor=False):
     torch.save(to_tensor(score.reshape(dataset_size, 1)), data_path+'happy_score.pt')
     torch.save(to_tensor(features), data_path+'input_features.pt')
 
-        
+def train_loader(t_dataset, t_target, batchsize):
+    """
+    Input: tensor dataset
+    Output: data loader of training set
+    """
+
+    dataset_Tensor = data.TensorDataset(t_dataset, t_target)
+
+    return data.DataLoader(
+        dataset = dataset_Tensor,
+        batch_size=batchsize,
+        shuffle=True
+    )
+
+def valid_loader(v_dataset, v_target, batchsize):
+    """
+    Input: tensor dataset
+    Output: data loader of validation set
+    """
+
+    validset_Tensor = data.TensorDataset(v_dataset, v_target)
+
+    return data.DataLoader(
+        dataset=validset_Tensor,
+        batch_size=batchsize, 
+        shuffle=True
+    )
+
+def save_checkpoint(state, is_best, save_path, filename='checkpoint.pth.tar'):
+    torch.save(state, save_path+filename)
+    if is_best:
+        shutil.copyfile(filename, save_path+'model_best.pth.tar')
