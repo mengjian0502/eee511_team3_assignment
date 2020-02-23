@@ -95,3 +95,8 @@ def save_checkpoint(state, is_best, save_path, filename='checkpoint.pth'):
         torch.save(state, save_path+'model_best.pth')
     else:
         torch.save(state, save_path+filename)
+
+def print_log(print_string, log):
+    print("{}".format(print_string))
+    log.write('{}\n'.format(print_string))
+    log.flush()
