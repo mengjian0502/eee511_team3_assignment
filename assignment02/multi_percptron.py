@@ -22,7 +22,7 @@ parser = argparse.ArgumentParser(description='Kaggle Happiness Score Regression'
 parser.add_argument('--year', type=int, default=2015, help='which year')
 parser.add_argument('--lr', type=float, default=0.01, help='learning rate of training')
 parser.add_argument('--epochs', type=int, default=10, help='training epochs')
-parser.add_argument('--val_perc', type=float, default='ratio of validation set')
+parser.add_argument('--val_perc', type=float, default=0.2, help='ratio of validation set')
 parser.add_argument('--batch', type=int, default=64, help='batch size')
 parser.add_argument('--cuda', default=True, help='use cuda')
 
