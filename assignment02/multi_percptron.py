@@ -14,6 +14,7 @@ import argparse
 import os
 import torch.utils.data as data
 import matplotlib.pyplot as plt
+import random
 import seaborn as sns;sns.set()
 from torch.autograd import Variable
 from utils import *
@@ -44,14 +45,16 @@ class Net(nn.Module):
         super(Net, self).__init__()
         self.linear1 = nn.Linear(6, D_h)
         self.linear2 = nn.Linear(D_h, 1)
-        self.relu = nn.ReLU(inplace=True)
+        self.sigmoid = nn.Sigmoid()
     
     def forward(self, x):
-        out = self.relu(self.linear1(x))
-        out = self.relu(self.linear2(out))
+        out = self.sigmoid(self.linear1(x))
+        out = self.linear2(out)
         return out
 
 def main():
+    # random.seed(5000)
+    # torch.manual_seed(5000)
     # log 
     log = open(os.path.join(args.save_path,
                             'log_mlp_log.txt'), 'w')
@@ -127,8 +130,7 @@ def main():
             }, is_best, args.save_path)
 
         if e % args.prt_freq == 0:
-            # print(f"Epoch: {e}, training loss: {t_loss}, validation_loss: {v_loss}")
-            if is_best:
+            if is_best: 
                 print_log(f"Best model obtained: epoch = {e}, saving...", log)
                 best_loss = v_loss
             print_log(f"Epoch: {e}/{args.epochs}, training loss: {t_loss}, validation_loss: {v_loss}, LR={current_learning_rate}, momentum={current_momentum}, best accuracy {best_loss}", log)
@@ -163,7 +165,6 @@ def train(model, train_loader, optimizer, epoch, total_epoch, device):
     avg_loss = loss_sum / len(train_loader.dataset)
 
     return avg_loss
-    
     
 
 def valid(model, epoch, valid_loader, device):
