@@ -71,11 +71,11 @@ The minimum loss that the mlp can achieved is **0.2860**
 
 #### Linear regression training & validation
 
-<img src="/Users/jianmeng/Desktop/ASU/EEE511/assignments/eee511_team3_assignment/assignment02/save_lr/curve.png" alt="curve" style="zoom:33%;" />
+<img src="./save_lr/curve.png" alt="curve" style="zoom:33%;" />
 
 #### Multi-layer Perceptron training & validation
 
-<img src="/Users/jianmeng/Desktop/ASU/EEE511/assignments/eee511_team3_assignment/assignment02/save/curve.png" alt="curve" style="zoom:33%;" />
+<img src="./save/curve.png" alt="curve" style="zoom:33%;" />
 
 ### Requirements
 
