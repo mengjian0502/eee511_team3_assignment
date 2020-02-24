@@ -54,8 +54,7 @@ def main():
     # devices
     use_cuda = args.cuda and torch.cuda.is_available()                                                                                              # check the if the cuda is available
     device = torch.device("cuda" if use_cuda else "cpu")                                                                                            # define the device
-
-    d_h = 5                                                                                                                                         # dimensionality of hidden layer
+                                                                                                                                         # dimensionality of hidden layer
 
     if not os.path.isdir(args.save_path):                                                                                                           # create the save path
         os.makedirs(args.save_path)

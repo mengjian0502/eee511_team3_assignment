@@ -56,8 +56,8 @@ class Net(nn.Module):
         return out
 
 def main():
-    random.seed(5000)
-    torch.manual_seed(5000)
+    # random.seed(5000)
+    # torch.manual_seed(5000)
     # log 
     log = open(os.path.join(args.save_path,                                                                                                         # create the log file
                             'log_mlp_log.txt'), 'w')
@@ -68,7 +68,7 @@ def main():
 
     print_log(f"Use device: {device}, cuda availablity: {torch.cuda.is_available()}", log)      
 
-    d_h = 5                                                                                                                                         # dimensionality of hidden layer
+    d_h = 8                                                                                                                                         # dimensionality of hidden layer
 
     if not os.path.isdir(args.save_path):                                                                                                           # create the save path
         os.makedirs(args.save_path)
@@ -156,7 +156,7 @@ def train(model, train_loader, optimizer, epoch, total_epoch, device):
         x = Variable(bx.float(), requires_grad=False).to(device)                                                                                    # wrap up the input batch
         y = Variable(by.float(), requires_grad=False).to(device)    
 
-        y_hat = model(x)                                                                                                                            # forward pass                                                                
+        y_hat = model(x)                                                                                                                            # forward  pass
         loss = loss_fn(y_hat, y)                                                                                                                    # compute the loss
 
         loss_sum += loss.item() * len(bx)
