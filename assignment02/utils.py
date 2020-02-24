@@ -13,6 +13,9 @@ import torch.utils.data as data
 import shutil
 
 def to_tensor(sat_val):
+    """
+    convert the input data into pytorch tensor
+    """
     is_scalar = not isinstance(sat_val, torch.Tensor)
     out = torch.tensor(sat_val) if is_scalar else sat_val.clone().detach()
     if not out.is_floating_point():
@@ -33,8 +36,8 @@ def data_read(data_path, tensor=False):
     - Generosity
     - Corruption
     """
-    attr = ['Score','GDP', 'Family', 'Health', 'Freedom', 'Generosity', 'Corruption']
-    year = np.arange(2015, 2020, 1)
+    attr = ['Score', 'GDP', 'Family', 'Health', 'Freedom', 'Generosity', 'Corruption']
+    year = np.arange(2015, 2020, 1)                                                     # csv file: from 2015 to 2019
     
     score = []
     features = []
@@ -42,8 +45,8 @@ def data_read(data_path, tensor=False):
     dataset_size = 0
 
     for yy in year:
-        file_path = data_path + f'{yy}.csv'
-        df = pd.read_csv(file_path, usecols=attr).to_numpy()
+        file_path = data_path + f'{yy}.csv'                                             # define the relative path of the .csv file
+        df = pd.read_csv(file_path, usecols=attr).to_numpy()                            # read the csv file
         
         sc = df[:, 0]
         f = df[:, 1:]
@@ -56,11 +59,11 @@ def data_read(data_path, tensor=False):
     score = np.concatenate(score, axis=0)
     features = np.concatenate(features, axis=0)
 
-    # np.save(data_path+'input_features.npy', features)
-    # np.save(data_path+'happy_score.npy', score.reshape(dataset_size, 1))
+    # np.save(data_path+'input_features.npy', features)                                 # save the extracted data into .npy file
+    # np.save(data_path+'happy_score.npy', score.reshape(dataset_size, 1))              # save the happiness score into .npy file
 
-    torch.save(to_tensor(score.reshape(dataset_size, 1)), data_path+'happy_score.pt')
-    torch.save(to_tensor(features), data_path+'input_features.pt')
+    torch.save(to_tensor(score.reshape(dataset_size, 1)), data_path+'happy_score.pt')   # save the extracted data into .pt file
+    torch.save(to_tensor(features), data_path+'input_features.pt')                      # save the happiness score into .pt file
 
 def train_loader(t_dataset, t_target, batchsize):
     """
@@ -91,7 +94,7 @@ def valid_loader(v_dataset, v_target, batchsize):
     )
 
 def save_checkpoint(state, is_best, save_path, filename='checkpoint.pth'):
-    if is_best:
+    if is_best is True:
         torch.save(state, save_path+'model_best.pth')
     else:
         torch.save(state, save_path+filename)
