@@ -38,7 +38,7 @@ To run the linear regression model, please type.
 The trained model will be stored in the `save_lr` folder under the running directory.
 
 ```python
-python3 LinearRegression.py
+python3 linear_regression.py
 ```
 
 The minimum loss that the model achieved is **0.2908**
