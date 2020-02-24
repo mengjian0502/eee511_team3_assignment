@@ -53,9 +53,7 @@ class LR_Model(nn.Module):
 def main():
     # devices
     use_cuda = args.cuda and torch.cuda.is_available()                                                                                              # check the if the cuda is available
-    device = torch.device("cuda" if use_cuda else "cpu")                                                                                            # define the device
-                                                                                                                                         # dimensionality of hidden layer
-
+    device = torch.device("cuda" if use_cuda else "cpu")                                                                                            # define the device                                                                                                       # dimensionality of hidden layer
     if not os.path.isdir(args.save_path):                                                                                                           # create the save path
         os.makedirs(args.save_path)
         print(f'save path: {args.save_path} created')
