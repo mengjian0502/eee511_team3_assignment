@@ -14,11 +14,11 @@ class Kmeans():
         self.num_clusters = num_clusters
         self.tol = tol
     
-    def distance(x, y):
+    def distance(self, x, y):
         """
         Return the euclidian distance between two points
         """
-        return np.linalg.norm(a-b)
+        return np.linalg.norm(x-y)
 
     def get_cluster(self, data):
         old_centroids = []
@@ -28,7 +28,7 @@ class Kmeans():
         init_centorid = data[init_centorid_idx]                                             # randomly fetch the centroids
 
         old_centroids.append(init_centorid)                                                 # record the initial estimation
-        
+
 
 
 def main():
