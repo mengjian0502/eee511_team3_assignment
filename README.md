@@ -11,3 +11,4 @@ EEE 511 (Spring 2020) - Group assignment
 
 - [Assignment 01](https://github.com/mengjian0502/eee511_team3_assignment/tree/master/assignment01) 
 - [Assignment 02](https://github.com/mengjian0502/eee511_team3_assignment/tree/master/assignment02)
+- [Assignment 04](https://github.com/mengjian0502/eee511_team3_assignment/tree/master/assignment04)
