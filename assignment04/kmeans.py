@@ -35,7 +35,7 @@ class k_means():
         est_centorid = data[init_centorid_idx]                                             # randomly fetch the centroids
 
         old_centroids.append(est_centorid)                                                 # record the initial estimation
-        prev_centroids = np.zeros(est_centorid.shape)
+        prev_centroids = np.zeros(est_centorid.shape)                                      # initialize centroid history
 
         classify = np.zeros((sample_size, ))
         diff = self.distance(est_centorid, prev_centroids)
@@ -85,7 +85,7 @@ def plotting(predict_labels, data, num_clusters):
 
     plt.title('Kmeans: after clustering')
     plt.legend(loc='best')
-    plt.savefig(f'../figs/kmeans_cluster_{num_clusters}.png')
+    plt.savefig(f'./figs/kmeans_cluster_{num_clusters}.png')
             
 def main():
     clusters = args.clusters
@@ -93,8 +93,8 @@ def main():
         raise ValueError("Number of clusters must be 3, 5, or 7!")
 
     # Load the data samples and the corresponding labels
-    labels = np.load('../data/labels.npy')
-    samples = np.load('../data/samples.npy')
+    labels = np.load('./data/labels.npy')
+    samples = np.load('./data/samples.npy')
 
     print(f'Size of the data samples: {samples.shape}')
 
@@ -106,7 +106,7 @@ def main():
     plt.figure(figsize=(8,8), dpi=300)
     sns.scatterplot(principleComp[:, 0], principleComp[:, 1])
     plt.title('Before clustering')
-    plt.savefig('../figs/pca_process.png')
+    plt.savefig('./figs/pca_process.png')
     plt.close()
 
     # Performing kmeans (with sklearn)
