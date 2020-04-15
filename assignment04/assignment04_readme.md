@@ -27,7 +27,7 @@ To visualize the 5 dimensional datasamples without loose the generality, we perf
 
 ### Kmeans Clustering algorithm
 
-- **Input: ** number of clusters $K$, datasets $X = [x_1, x_2, \dots, x_n]$  
+- **Input:** Number of clusters $K$, datasets $X = [x_1, x_2, \dots, x_n]$  
 - **Initialization:** Randomly set the centroids $c_1, c_2, \dots c_K$
 - **Repeat until convergence:**
   - For each data point, find the nearest centroid $c_j$ 
