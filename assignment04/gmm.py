@@ -116,7 +116,6 @@ def init_params(shape, K):
     debug("mu:", mu, "cov:", cov, "alpha:", alpha, sep="\n")
     return mu, cov, alpha
 
-
 ######################################################
 # Gaussian mixture model EM algorithm
 # Given the sample matrix Y, calculate the model parameters
@@ -126,9 +125,20 @@ def init_params(shape, K):
 def GMM_EM(Y, K, times):
     Y = scale_data(Y)
     mu, cov, alpha = init_params(Y.shape, K)
+    log_likelihood = []
+    
     for i in range(times):
         gamma = getExpectation(Y, mu, cov, alpha)
         mu, cov, alpha = maximize(Y, gamma)
+        
+        likelihood = 0
+        
+        for c in range(cov.shape[0]):
+            mu_c = mu[c]
+            cov_c = cov[c, :, :]
+            likelihood += alpha[c] * phi(Y, mu_c, cov_c)
+
+        log_likelihood.append(likelihood)
     debug("{sep} Result {sep}".format(sep="-" * 20))
     debug("mu:", mu, "cov:", cov, "alpha:", alpha, sep="\n")
-    return mu, cov, alpha
+    return mu, cov, alpha, np.array(log_likelihood)

@@ -25,7 +25,10 @@ def main():
         raise ValueError("Number of clusters must be 3, 5, or 7!")
     
     # Calculate the Gmm models parameters 
-    mu, cov, alpha = GMM_EM(matY, K, 200)
+    num_iter = 200
+    mu, cov, alpha, log_likelihood = GMM_EM(matY, K, num_iter)
+    
+    print(log_likelihood.shape)
 
     # According to the GMM model, cluster the sample data, one model corresponds to one category
     N = Y.shape[0]
@@ -44,6 +47,13 @@ def main():
     plt.legend(loc="best")
     plt.title("GMM Clustering By EM Algorithm")
     plt.savefig(f'./figs/gemm_cluster_{K}.png')
+
+    plt.figure(figsize=(5,5), dpi=300)
+    plt.plot(np.arange(1, num_iter+1, 1), log_likelihood.mean(axis=1))
+    
+    plt.title(f'GEMM: Log likelihood | Num clusters = {K}')
+    plt.xlabel('Iterations')
+    plt.savefig(f'./figs/gemm_loglike_{K}.png', bbox_inches = 'tight', pad_inches = 0)
 
 if __name__ == '__main__':
     main()

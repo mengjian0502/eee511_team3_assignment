@@ -40,9 +40,11 @@ class k_means():
         classify = np.zeros((sample_size, ))
         diff = self.distance(est_centorid, prev_centroids)
         num_iter = 0
+        loss = []
 
         while diff > self.tol:
             diff = self.distance(est_centorid, prev_centroids)
+            loss.append(diff*2)                                                             # record the losses
             num_iter += 1
             print(f'Iter: {num_iter} | diff: {diff}')
 
@@ -66,7 +68,7 @@ class k_means():
             est_centorid = tmp_est
             old_centroids.append(tmp_est)
 
-        return est_centorid, old_centroids, classify
+        return est_centorid, old_centroids, classify, loss, num_iter
 
 
 def plotting(predict_labels, data, num_clusters):
@@ -85,7 +87,7 @@ def plotting(predict_labels, data, num_clusters):
 
     plt.title('Kmeans: after clustering')
     plt.legend(loc='best')
-    plt.savefig(f'./figs/kmeans_cluster_{num_clusters}.png')
+    plt.savefig(f'./figs/kmeans_cluster_{num_clusters}.png', bbox_inches = 'tight', pad_inches = 0)
             
 def main():
     clusters = args.clusters
@@ -106,7 +108,7 @@ def main():
     plt.figure(figsize=(8,8), dpi=300)
     sns.scatterplot(principleComp[:, 0], principleComp[:, 1])
     plt.title('Before clustering')
-    plt.savefig('./figs/pca_process.png')
+    plt.savefig('./figs/pca_process.png', bbox_inches = 'tight', pad_inches = 0)
     plt.close()
 
     # Performing kmeans (with sklearn)
@@ -114,10 +116,19 @@ def main():
     # predict_labels = km.fit_predict(samples)
 
     km = k_means(num_clusters=clusters, tol=1e-4)
-    est_centroid, history_centroids, predict_labels = km.get_cluster(samples)
+    est_centroid, history_centroids, predict_labels, loss, num_iter = km.get_cluster(samples)
     
     # plotting:
     plotting(predict_labels, principleComp, clusters)
+
+    # losses
+    plt.figure(figsize=(8,8), dpi=300)
+    plt.plot(np.arange(0, num_iter, 1), loss)
+    plt.xlabel('Iteration', fontsize=16)
+    plt.ylabel('Cost')
+    plt.xticks(np.arange(0, num_iter, 1))
+    plt.title(f'Kmeans: Cost in learning | Number of clusters={clusters}')
+    plt.savefig('./figs/Kmeans_loss.png', bbox_inches = 'tight', pad_inches = 0)
 
 
     
