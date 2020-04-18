@@ -123,7 +123,7 @@ def init_params(shape, K):
 # times is the number of iterations
 ######################################################
 def GMM_EM(Y, K, times):
-    Y = scale_data(Y)
+    # Y = scale_data(Y)
     mu, cov, alpha = init_params(Y.shape, K)
     log_likelihood = []
     

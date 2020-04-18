@@ -95,7 +95,7 @@ def main():
         raise ValueError("Number of clusters must be 4, 6, 8, or 10!")
 
     # Load the data samples and the corresponding labels
-    samples = np.load('./data/customer_data.npy', allow_pickle=True)
+    samples = np.load('./data/customer_data_minmax_scale.npy', allow_pickle=True)
 
     print(f'Size of the data samples: {samples.shape}')
 
