@@ -54,10 +54,20 @@ def main():
     df = pd.read_csv(data_path)
     data = df[[f1, f2]].iloc[: , :].to_numpy()
 
+
+    if f1 == 'Gender':
+        gender = data[:, 0]
+
+        gender[gender=='Male'] = 5.
+        gender[gender=='Female'] = 10.
+        print(gender)
+        data[:,0] = gender
+
     print(f'Shape of the data: {data.shape}')
 
     km = k_means(num_clusters=clusters, tol=1e-4)
     est_centroid, history_centroids, predict_labels, loss, num_iter = km.get_cluster(data)
+
 
     plotting(predict_labels, data, clusters, est_centroid, f1, f2)
 

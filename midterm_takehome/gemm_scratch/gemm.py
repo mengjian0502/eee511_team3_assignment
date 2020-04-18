@@ -4,7 +4,6 @@ import matplotlib.pyplot as plt
 import seaborn as sns; sns.set()
 
 from gmm import *
-from sklearn.decomposition import PCA
 
 # Set debug mode
 DEBUG = True
@@ -16,24 +15,14 @@ args = parser.parse_args()
 
 def main():
     # Load data
-    Y = np.load('./data/customer_data_minmax_scale.npy', allow_pickle=True)
+    Y = np.load("./data/customer_data_original.npy", allow_pickle=True)
     matY = np.matrix(Y, copy=True)
 
     # The number of models
     K = args.clusters
 
     if K not in [4, 6, 8, 10]:
-        raise ValueError("Number of clusters must be 4, 6, 8, or 10!")
-
-    pca = PCA(n_components=2)
-    principleComp = pca.fit_transform(Y)
-    
-    # visualize the transformed data:
-    plt.figure(figsize=(8,8), dpi=300)
-    sns.scatterplot(principleComp[:, 0], principleComp[:, 1])
-    plt.title('Before clustering')
-    plt.savefig('./figs/pca_process_gemm.png', bbox_inches = 'tight', pad_inches = 0)
-    plt.close()
+        raise ValueError("Number of clusters must be 3, 5, or 7!")
     
     # Calculate the Gmm models parameters 
     num_iter = 200
@@ -49,20 +38,18 @@ def main():
     category = gamma.argmax(axis=1).flatten().tolist()[0]
     # Put each sample in the corresponding category list
 
-    marker = ['s', 'o', 'v', '^', 'x', 'D', 'P', 'X', 'h', '+']
+    marker = ['rs', 'bo', 'gv', 'kp', 'yh', 'c<', 'm>']
     plt.figure(figsize=(8,8), dpi=300)
     for kk in range(K):
-        cluster = np.array([principleComp[i] for i in range(N) if category[i] == kk])
+        cluster = np.array([Y[i] for i in range(N) if category[i] == kk])
         plt.plot(cluster[:, 0], cluster[:, 1], marker[kk], label=f"class{kk+1}")
-
-
 
     plt.legend(loc="best")
     plt.title("GMM Clustering By EM Algorithm")
     plt.savefig(f'./figs/gemm_cluster_{K}.png')
 
     plt.figure(figsize=(5,5), dpi=300)
-    plt.plot(np.arange(1, num_iter+1, 1), log_likelihood.sum(axis=1))
+    plt.plot(np.arange(1, num_iter+1, 1), log_likelihood.mean(axis=1))
     
     plt.title(f'GEMM: Log likelihood | Num clusters = {K}')
     plt.xlabel('Iterations')

@@ -71,7 +71,7 @@ class k_means():
         return est_centorid, old_centroids, classify, loss, num_iter
 
 
-def plotting(predict_labels, data, num_clusters):
+def plotting(predict_labels, data, num_clusters, centroids):
     color = ['lightgreen', 'orange', 'lightblue', 'steelblue', 'red', 'blueviolet', 'aqua', 'g', 'tan', 'darkcyan', 'darkblue']
     markers = ['s', 'o', 'v', '^', 'x', 'D', 'P', 'X', 'h', '+']
 
@@ -85,9 +85,19 @@ def plotting(predict_labels, data, num_clusters):
             label=f'cluster {ii+1}'
         )
 
+        plt.scatter(
+            centroids[ii, 0],
+            centroids[ii, 1],
+            marker='X',
+            s=100,
+            c=color[ii],
+            label=f'centroid {ii+1}'
+        )
+
     plt.title(f'Kmeans: after clustering | Number of clusters={args.clusters}')
     plt.legend(loc='best')
-    plt.savefig(f'./figs/kmeans_cluster_{num_clusters}.png', bbox_inches = 'tight', pad_inches = 0)
+    plt.savefig(f'./figs/kmeans_cluster_{num_clusters}_genderFalse.png', bbox_inches = 'tight', pad_inches = 0)
+
             
 def main():
     clusters = args.clusters
@@ -95,8 +105,9 @@ def main():
         raise ValueError("Number of clusters must be 4, 6, 8, or 10!")
 
     # Load the data samples and the corresponding labels
-    samples = np.load('./data/customer_data_minmax_scale.npy', allow_pickle=True)
+    samples = np.load('./data/customer_data_original_genderFalse.npy', allow_pickle=True)
 
+    # print(f"Empty data: {samples.isnull().any().any()}")
     print(f'Size of the data samples: {samples.shape}')
 
     # data preprocessing: PCA
@@ -117,8 +128,11 @@ def main():
     km = k_means(num_clusters=clusters, tol=1e-4)
     est_centroid, history_centroids, predict_labels, loss, num_iter = km.get_cluster(samples)
     
+    centroid_pca = pca.fit_transform(est_centroid)
+
+    print(est_centroid)
     # plotting:
-    plotting(predict_labels, principleComp, clusters)
+    plotting(predict_labels, principleComp, clusters, centroid_pca)
 
     # losses
     plt.figure(figsize=(8,8), dpi=300)
