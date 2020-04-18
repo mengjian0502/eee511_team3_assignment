@@ -21,6 +21,9 @@ def main():
     gender[gender=='Female'] = 2.
     data[:,0] = gender
 
+    for ii in range(data.shape[1]):
+        data[:, ii] = data[:, ii] / np.max(data[:, ii])
+
     
     np.save('./customer_data.npy', data)
 
