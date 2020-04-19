@@ -5,6 +5,7 @@ import argparse
 import numpy as np
 import matplotlib.pyplot as plt
 import seaborn as sns; sns.set()
+import sklearn
 
 from sklearn.mixture import GaussianMixture
 from sklearn.decomposition import PCA
@@ -37,7 +38,7 @@ def plotting(predict_labels, data, num_clusters):
 def main():
     K = args.clusters
 
-    if K not in [4, 6, 8, 10]:
+    if K not in [3, 4, 5, 6, 7, 8, 9, 10]:
         raise ValueError("Number of clusters must be 4, 6, 8, or 10!")
 
     X = np.load("./data/customer_data_original_genderFalse.npy", allow_pickle=True)
@@ -53,10 +54,15 @@ def main():
 
     labels = gmm_x.predict(X)
 
+    inter_score = sklearn.metrics.silhouette_score(X, labels ,metric='euclidean', sample_size=None, random_state=None)
+
     plotting(labels, principleComp, K)
 
-    print(f'GMM: Converged = {gmm_x.converged_} | num_iter = {gmm_x.n_iter_}')
+    cov_sum = gmm_x.covariances_.sum()
 
+    print(f'GMM: Converged = {gmm_x.converged_} | num_iter = {gmm_x.n_iter_} | cov = {cov_sum} | inter score: {inter_score}')
+
+    return inter_score
 
 
 if __name__ == '__main__':

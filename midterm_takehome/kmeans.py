@@ -14,7 +14,7 @@ from sklearn.cluster import KMeans
 parser = argparse.ArgumentParser(description='Kmeans clustering')
 # parameters
 parser.add_argument('--clusters', type=int, default=4, help='number of clusters')
-args = parser.parse_args()
+args = parser.parse_args()        
 
 class k_means():
     def __init__(self, num_clusters, tol):
@@ -71,6 +71,24 @@ class k_means():
         return est_centorid, old_centroids, classify, loss, num_iter
 
 
+
+def compute_inertia(X, est_centorid, predict_labels, num_clusters):
+    total_inertia = 0
+    for ii in range(num_clusters):
+        data = X[predict_labels == ii]
+        inertia = 0
+        centroid = est_centorid[ii]
+        
+        for jj in range(data.shape[0]):
+            data_point = data[jj, :]
+            inertia += np.linalg.norm(data_point - centroid)
+        
+        total_inertia += inertia
+    
+    print(f'Clusters: {num_clusters} | interia = {total_inertia}')
+    return total_inertia
+
+
 def plotting(predict_labels, data, num_clusters, centroids):
     color = ['lightgreen', 'orange', 'lightblue', 'steelblue', 'red', 'blueviolet', 'aqua', 'g', 'tan', 'darkcyan', 'darkblue']
     markers = ['s', 'o', 'v', '^', 'x', 'D', 'P', 'X', 'h', '+']
@@ -97,11 +115,11 @@ def plotting(predict_labels, data, num_clusters, centroids):
     plt.title(f'Kmeans: after clustering | Number of clusters={args.clusters}')
     plt.legend(loc='best')
     plt.savefig(f'./figs/kmeans_cluster_{num_clusters}_genderFalse.png', bbox_inches = 'tight', pad_inches = 0)
-
+    plt.close()
             
 def main():
     clusters = args.clusters
-    if clusters not in [4, 6, 8, 10]:
+    if clusters not in [3, 4, 5, 6, 7, 8, 9, 10]:
         raise ValueError("Number of clusters must be 4, 6, 8, or 10!")
 
     # Load the data samples and the corresponding labels
@@ -130,10 +148,11 @@ def main():
     
     centroid_pca = pca.fit_transform(est_centroid)
 
-    print(est_centroid)
+    
     # plotting:
     plotting(predict_labels, principleComp, clusters, centroid_pca)
 
+    inertia = compute_inertia(samples, est_centroid, predict_labels, clusters)
     # losses
     plt.figure(figsize=(8,8), dpi=300)
     plt.plot(np.arange(0, num_iter, 1), loss)
@@ -142,8 +161,9 @@ def main():
     plt.xticks(np.arange(0, num_iter, 1))
     plt.title(f'Kmeans: Cost in learning | Number of clusters={clusters}')
     plt.savefig('./figs/Kmeans_loss.png', bbox_inches = 'tight', pad_inches = 0)
+    plt.close()
 
-
+    return inertia
     
 
 if __name__ == '__main__':
